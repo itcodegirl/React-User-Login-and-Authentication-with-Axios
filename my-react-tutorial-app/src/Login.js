@@ -37,11 +37,26 @@ const Login = () => {
                     withCredentials: true
                 }
             );
+            console.log(JSON.stringify(reponse?.data));
+
+            const accessToken = response?.data.accessToken;
+            const roles = response?.data.roles;
+            // the roles would be an array on the backend assigned w/ numbers
+            setAuth({user, password, roles, accessToken})
             setUser("");
             setpassword("");
             setSuccess(true);
             } catch (err) {
-            
+            if (!err?.reponse) {
+                setErrorMsg("No Server Response");
+            } else if (err.reponse?.status === 400) {
+                setErrorMsg('Missing Username or Password');
+            } else if (err.response?.status === 401) {
+                setErrorMsg('Unauthorized');
+            } else {
+                setErrorMsg('Login Failed');
+            }
+            errRef.current.focus();
         }
         
     } 
